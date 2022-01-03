@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22e6d58a4dc3e4111ab47102a8398abd, type: 3}
   m_Name: ProjectReadme
   m_EditorClassIdentifier: 
-  icon: {fileID: 2800000, guid: 7cfe3dcd943074ddb8a7e1a90240f43a, type: 3}
-  title: ' Coco'
+  icon: {fileID: 2800000, guid: 25a734dc959914642890cfd588767d5f, type: 3}
+  title: ' CollieLab'
   sections:
-  - heading: Welcome to Project CocoaPuffs
+  - heading: Welcome to CollieLab
     text: 
     linkText: 
     url: 
-  loadedLayout: 0
+  loadedLayout: 1
   font: {fileID: 12800000, guid: c89b8b2487d5148088897c4cbe74eb05, type: 3}
