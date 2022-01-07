@@ -5,7 +5,16 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/CollieLab/GameSystem/Scenes/PersistanceScene.unity
+    guid: 5e8a9fbb546bc432fa0ecf3ed6b2a08d
+  - enabled: 1
+    path: Assets/CollieLab/GameSystem/Scenes/Scene#1.unity
+    guid: b3c7fedb380764fd19b7b6e55d6b8eb6
+  - enabled: 1
+    path: Assets/CollieLab/GameSystem/Scenes/Scene#2.unity
+    guid: f70c2a8f82ea24d7fa9318be0bc6ecbf
   m_configObjects: {}
