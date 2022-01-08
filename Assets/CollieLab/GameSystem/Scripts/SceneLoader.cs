@@ -13,7 +13,7 @@ namespace CollieLab.GameSystems
         [SerializeField] private UnityEvent OnLoadEnd = new UnityEvent();
 
         [Header("Load Settings")]
-        [SerializeField] private float sceneChangeWaitSeconds = 1f;
+        [SerializeField] private ScreenFader screenFader = null;
         #endregion
 
         #region Private Field
@@ -22,12 +22,9 @@ namespace CollieLab.GameSystems
 
         private void Awake()
         {
-            LoadFirstScene();
-        }
-
-        private void OnEnable()
-        {
             SceneManager.sceneLoaded += SetActiveScene;
+
+            LoadFirstScene();
         }
 
         #region Initialize
@@ -36,10 +33,6 @@ namespace CollieLab.GameSystems
         /// </summary>
         private void LoadFirstScene()
         {
-            if (!Application.isEditor)
-            {
-                SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1, LoadSceneMode.Additive);
-            }
             SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1, LoadSceneMode.Additive);
         }
         #endregion
@@ -60,7 +53,7 @@ namespace CollieLab.GameSystems
         /// </summary>
         public void LoadNewScene(string sceneName)
         {
-            if (isLoading)
+            if (!isLoading)
             {
                 StartCoroutine(LoadScene(sceneName));
             }
@@ -71,13 +64,15 @@ namespace CollieLab.GameSystems
             isLoading = true;
 
             OnLoadBegin?.Invoke();
-            // screen fadein
-            yield return UnloadCurrent();
+            yield return screenFader.FadeIn();
 
-            yield return new WaitForSeconds(sceneChangeWaitSeconds);
+            yield return StartCoroutine(UnloadCurrent());
 
-            yield return LoadNew(sceneName);
-            // screen fadeout
+            yield return new WaitForSeconds(1f); // This is for testing.
+
+            yield return StartCoroutine(LoadNew(sceneName));
+
+            yield return screenFader.FadeOut();
             OnLoadEnd?.Invoke();
 
             isLoading = false;
