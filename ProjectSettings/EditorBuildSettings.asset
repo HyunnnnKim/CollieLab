@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/CollieLab/GameSystem/Scenes/Scene#2.unity
     guid: f70c2a8f82ea24d7fa9318be0bc6ecbf
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: e7cadb37ae26f417b90683296b0abfbb,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: a8c40697185a540e5a795bc8dcf800a4,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 1dd32511e09fb400aac7db7ba713b3b5,
+      type: 2}
