@@ -9,21 +9,21 @@ namespace CollieLab.XR.Inputs
     public class AxisHandler : XRInputHandler, ISerializationCallbackReceiver
     {
         #region Events
-        public event Action<XRController, Vector2> OnValueChange = null;
+        public event Action<XRController, float> OnValueChange = null;
         #endregion
 
         #region Serialized Field
-        [SerializeField] private Axis2D axis = Axis2D.None;
+        [SerializeField] private Axis axis = Axis.None;
         #endregion
 
         #region Private Field
-        private InputFeatureUsage<Vector2> inputFeature;
-        private Vector2 previousInput = Vector2.zero;
+        private InputFeatureUsage<float> inputFeature;
+        private float previousInput = 0f;
         #endregion
 
         public override void HandleInput(XRController controller)
         {
-            Vector2 value = GetValue(controller);
+            float value = GetValue(controller);
 
             if (value != previousInput)
             {
@@ -32,23 +32,23 @@ namespace CollieLab.XR.Inputs
             }
         }
 
-        public Vector2 GetValue(XRController controller)
+        public float GetValue(XRController controller)
         {
-            if (controller.inputDevice.TryGetFeatureValue(inputFeature, out Vector2 value))
+            if (controller.inputDevice.TryGetFeatureValue(inputFeature, out float value))
                 return value;
-            return Vector2.zero;
+            return 0f;
         }
 
         public void OnBeforeSerialize()
         {
-            // Empty
+            inputFeature = new InputFeatureUsage<float>(axis.ToString());
         }
 
         public void OnAfterDeserialize()
         {
-            inputFeature = new InputFeatureUsage<Vector2>(axis.ToString());
+            // Empty
         }
 
-        public enum Axis2D { None, Primary2DAxis, Secondary2DAxis }
+        public enum Axis { None, Trigger, Grip }
     }
 }
