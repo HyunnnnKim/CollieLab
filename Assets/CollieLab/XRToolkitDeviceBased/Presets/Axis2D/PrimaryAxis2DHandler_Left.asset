@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8abee81f14625472799bab511316a85e, type: 3}
-  m_Name: PrimaryAxis2DHandler
+  m_Name: PrimaryAxis2DHandler_Left
   m_EditorClassIdentifier: 
   axis: 1

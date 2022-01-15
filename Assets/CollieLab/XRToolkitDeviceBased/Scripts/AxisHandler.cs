@@ -41,12 +41,12 @@ namespace CollieLab.XR.Inputs
 
         public void OnBeforeSerialize()
         {
-            inputFeature = new InputFeatureUsage<float>(axis.ToString());
+            // Empty
         }
 
         public void OnAfterDeserialize()
         {
-            // Empty
+            inputFeature = new InputFeatureUsage<float>(axis.ToString());
         }
 
         public enum Axis { None, Trigger, Grip }
