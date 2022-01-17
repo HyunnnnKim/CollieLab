@@ -7,18 +7,6 @@ namespace CollieLab.XR.Managers
 {
     public class XRLocomotionManager : MonoBehaviour
     {
-        #region Static Field
-        private const string BaseControlScheme = "Generic XR Controller";
-        private const string NoncontinuousControlScheme = "Noncontinuous Move";
-        private const string ContinuousControlScheme = "Continuous Controller";
-        #endregion
-
-        #region Enums
-        public enum MoveType { Noncontinuous, Continuous }
-        public enum TurnType { Snap, Continuous }
-        public enum ForwardSource { Head, LeftHand, RightHand }
-        #endregion
-
         #region Serialized Field
         [Header("Locomotion Settings")]
         [Tooltip("Selected player movement type.")]
@@ -55,6 +43,27 @@ namespace CollieLab.XR.Managers
                 SetForwardSource(value);
                 selectedForwardSource = value;
             }
+        }
+
+        [SerializeField] private string baseControlScheme = null;
+        public string BaseControlScheme
+        {
+            get => baseControlScheme;
+            set => baseControlScheme = value;
+        }
+
+        [SerializeField] private string noncontinuousControlScheme = null;
+        public string NoncontinuousControlScheme
+        {
+            get => noncontinuousControlScheme;
+            set => noncontinuousControlScheme = value;
+        }
+
+        [SerializeField] private string continuousControlScheme = null;
+        public string ContinuousControlScheme
+        {
+            get => continuousControlScheme;
+            set => continuousControlScheme = value;
         }
 
         [Header("Locomotion References")]
@@ -247,5 +256,9 @@ namespace CollieLab.XR.Managers
                 : (InputBinding?)null;
         }
         #endregion
+
+        public enum MoveType { Noncontinuous, Continuous }
+        public enum TurnType { Snap, Continuous }
+        public enum ForwardSource { Head, LeftHand, RightHand }
     }
 }

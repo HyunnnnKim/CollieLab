@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace CollieLab.XR.Managers
 {
@@ -16,6 +17,7 @@ namespace CollieLab.XR.Managers
 
         #region Serialized Field
         [Header("Controller GameObjects")]
+        [FormerlySerializedAs("BaseControllerGO")]
         [SerializeField] private GameObject baseControllerGameObject = null;
         public GameObject BaseControllerGameObject
         {
@@ -23,6 +25,7 @@ namespace CollieLab.XR.Managers
             set => baseControllerGameObject = value;
         }
 
+        [FormerlySerializedAs("TeleportControllerGO")]
         [SerializeField] private GameObject teleportControllerGameObject = null;
         public GameObject TeleportControllerGameObject
         {
@@ -59,6 +62,7 @@ namespace CollieLab.XR.Managers
             set => move = value;
         }
 
+        [FormerlySerializedAs("TranslateObject")]
         [SerializeField] private InputActionReference translateAnchor = null;
         public InputActionReference TranslateAnchor
         {
@@ -66,6 +70,7 @@ namespace CollieLab.XR.Managers
             set => translateAnchor = value;
         }
 
+        [FormerlySerializedAs("RotateObject")]
         [SerializeField] private InputActionReference rotateAnchor = null;
         public InputActionReference RotateAnchor
         {
@@ -432,7 +437,8 @@ namespace CollieLab.XR.Managers
                 set => enabled = value;
             }
 
-            [SerializeField] private StateID id = StateID.None;
+            [HideInInspector]
+            [SerializeField] private StateID id;
             public StateID ID
             {
                 get => id;
