@@ -8,9 +8,12 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: Assets/Oculus/Avatar2/Example/Scenes/MirrorScene/MirrorScene.unity
+    guid: 9f2e1693a4f24bc498477b3dfeb166aa
   - enabled: 1
-    path: Assets/CollieLab/XRPlayerController/Scenes/XRPlayerController.unity
-    guid: d0bb009d6f8b14bf3ba39f529c6f1f54
+    path: Assets/CollieLab/OVRPlayer/Scenes/OVRPlayer.unity
+    guid: d79c3098937774ba6aedc3eb80ec7987
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: e7cadb37ae26f417b90683296b0abfbb,
       type: 2}
