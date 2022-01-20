@@ -57,7 +57,7 @@ namespace CollieLab.XR.Controllers
 
         private void Start()
         {
-            SetCameraOffset();
+            //SetCameraOffset();
         }
 
         #region Initialize
