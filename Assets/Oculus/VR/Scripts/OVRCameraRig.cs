@@ -67,6 +67,11 @@ public class OVRCameraRig : MonoBehaviour
 	/// Anchors controller pose to fix offset issues for the right hand.
 	/// </summary>
 	public Transform rightControllerAnchor { get; private set; }
+
+	/* Added for physics hand tracking. */
+	[SerializeField] public Transform leftPhysicsHandAnchor { get; private set; }
+	[SerializeField] public Transform rightPhysicsHandAnchor { get; private set; }
+
 	/// <summary>
 	/// Always coincides with the pose of the sensor.
 	/// </summary>

@@ -6,6 +6,7 @@ namespace CollieLab.XR.Controllers
     {
         #region Private Field
         private Rigidbody body = null;
+        private Collider headCollider = null;
         #endregion
 
         protected override void Awake()
@@ -15,17 +16,41 @@ namespace CollieLab.XR.Controllers
             body = GetComponent<Rigidbody>();
             if (body == null)
                 Debug.Log($"Couldn't find any {nameof(body)} component on the Physics Head.", this);
+
+            headCollider = GetComponent<Collider>();
+            if (headCollider == null)
+            {
+                Debug.Log($"Couldn't find any {nameof(headCollider)} component on the Physics Hand.", this);
+                return;
+            }
+            IgnoreCollisions(headCollider);
         }
 
         private void FixedUpdate()
         {
-            PerformPhysicsTracking(body);
+            PerformPhysicsPostionTracking(body);
+            PerformPhysicsRotationTracking(body);
         }
 
         private void Update()
         {
-            SwitchTrackingAutomatic();
-            PerformNonPhysicsTracking(body);
+            AutomaticTrackingMode();
+            PerformNonPhysicsPostionTracking(body);
+            PerformNonPhysicsRotationTracking(body);
+        }
+
+        private void AutomaticTrackingMode()
+        {
+            if (collisionTriggerChecker.IsTriggered)
+            {
+                selectedPosTracking = TrackingMode.PIDController;
+                selectedRotTracking = TrackingMode.PIDController;
+            }
+            else
+            {
+                selectedPosTracking = TrackingMode.Transform;
+                selectedRotTracking = TrackingMode.Transform;
+            }
         }
     }
 }

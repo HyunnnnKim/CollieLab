@@ -24,7 +24,7 @@ public class SampleInputTrackingDelegate : OvrAvatarInputTrackingDelegate
             rightControllerActive = OVRInput.GetControllerOrientationTracked(OVRInput.Controller.RTouch);
         }
 
-        if (_ovrCameraRig)
+        if (_ovrCameraRig != null)
         {
             inputTrackingState = new OvrAvatarInputTrackingState
             {
@@ -34,6 +34,8 @@ public class SampleInputTrackingDelegate : OvrAvatarInputTrackingDelegate
                 leftControllerVisible = false,
                 rightControllerVisible = false,
                 headset = _ovrCameraRig.centerEyeAnchor,
+                //leftController = _ovrCameraRig.leftControllerAnchor,
+                //rightController = _ovrCameraRig.rightControllerAnchor
                 leftController = _ovrCameraRig.leftControllerAnchor,
                 rightController = _ovrCameraRig.rightControllerAnchor
             };
@@ -77,6 +79,7 @@ public class SampleInputTrackingDelegate : OvrAvatarInputTrackingDelegate
             inputTrackingState.rightController.orientation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
             inputTrackingState.leftController.scale = Vector3.one;
             inputTrackingState.rightController.scale = Vector3.one;
+
             return true;
         }
 

@@ -8,14 +8,13 @@ namespace CollieLab.XR.Controllers
     {
         #region Serialized Field
         [Header("References")]
-        [SerializeField] protected Rigidbody playerBody = null;
-        [SerializeField] protected Transform target = null;
-        [SerializeField] protected Collider[] ignoreColliders = null;
+        [SerializeField] protected PhysicsPlayerController physicsPlayer = null;
+        [SerializeField] protected Transform targetTracker = null;
 
         [Header("Tracking Settings")]
-        [SerializeField] protected TrackingMethod selectedTracking = TrackingMethod.PIDController;
-        [SerializeField] protected bool useAutoTracking = true;
-        [SerializeField] private CheckTrigger checkTrigger = null;
+        [SerializeField] protected TrackingMode selectedPosTracking = TrackingMode.PIDController;
+        [SerializeField] protected TrackingMode selectedRotTracking = TrackingMode.PIDController;
+        [SerializeField] protected CollisionTriggerChecker collisionTriggerChecker = null;
 
         [Header("PID Tracking")]
         [SerializeField] protected float positionFrequency = 50f;
@@ -30,88 +29,91 @@ namespace CollieLab.XR.Controllers
         [Range(0, 100)] [SerializeField] protected float maxRotChange = 75f;
         #endregion
 
+        #region Protected Field
+        protected Rigidbody trackerBody = null;
+        protected ConfigurableJoint joint = null;
+        #endregion
+
         protected virtual void Awake()
         {
-            IgnoreCollisions();
+            if (physicsPlayer == null)
+                physicsPlayer = GetComponentInParent<PhysicsPlayerController>();
         }
 
         #region Initialize
-        private void IgnoreCollisions()
+        // Needs modification.
+        protected void IgnoreCollisions(Collider collider)
         {
-            if (ignoreColliders == null) return;
-            Collider collider = GetComponent<Collider>();
-            if (collider == null)
-            {
-                Debug.Log($"Couldn't find any {nameof(collider)} component on the Physics Tracker.", this);
-                return;
-            }
+            if (physicsPlayer.PlayerIgnoreObjects == null) return;
 
-            for (int i = 0; i < ignoreColliders.Length; i++)
-                Physics.IgnoreCollision(collider, ignoreColliders[i]);
+            Collider[] ignoreList = physicsPlayer.PlayerIgnoreObjects.Colliders;
+            for (int i = 0; i < ignoreList.Length; i++)
+                Physics.IgnoreCollision(collider, ignoreList[i]);
         }
         #endregion
 
         #region Tracking
-        /// <summary>
-        /// Switch tracking method if collision is detected.
-        /// </summary>
-        protected void SwitchTrackingAutomatic()
+        protected void SetPositionTrackingMode(TrackingMode mode)
         {
-            if (!useAutoTracking) return;
-
-            if (checkTrigger == null)
-            {
-                Debug.Log($"Couldn't find any {nameof(checkTrigger)} component on the Physics Tracker.", this);
-                return;
-            }
-
-            if (checkTrigger.IsTriggered)
-            {
-                if (selectedTracking != TrackingMethod.PIDController)
-                    selectedTracking = TrackingMethod.PIDController;
-            }
-            else
-            {
-                if (selectedTracking != TrackingMethod.Transform)
-                    selectedTracking = TrackingMethod.Transform;
-            }
+            if (selectedPosTracking != mode)
+                selectedPosTracking = mode;
         }
 
-        /// <summary>
-        /// Perform physics tracking.
-        /// </summary>
-        protected void PerformPhysicsTracking(Rigidbody body)
+        protected void SetRotationTrackingMode(TrackingMode mode)
         {
-            switch (selectedTracking)
+            if (selectedRotTracking != mode)
+                selectedRotTracking = mode;
+        }
+
+        protected void PerformPhysicsPostionTracking(Rigidbody body)
+        {
+            switch (selectedPosTracking)
             {
-                case TrackingMethod.PIDController:
-                    body.TrackPositionPID(target.position, playerBody.velocity, positionFrequency, positionDamping);
-                    body.TrackRotationPID(target.rotation, rotationFrequency, rotationDamping);
+                case TrackingMode.PIDController:
+                    body.TrackPositionPID(targetTracker.position, physicsPlayer.HoverBody.velocity, positionFrequency, positionDamping);
                     break;
 
-                case TrackingMethod.Velocity:
-                    body.TrackPositionVelocity(target.position, slowDownVel, maxPosChange);
-                    body.TrackRotationVelocity(target.rotation, slowDownAngularVel, maxRotChange);
+                case TrackingMode.Velocity:
+                    body.TrackPositionVelocity(targetTracker.position, slowDownVel, maxPosChange);
                     break;
             }
         }
 
-        /// <summary>
-        /// Perform non-physics tracking.
-        /// Should be called on
-        /// </summary>
-        protected void PerformNonPhysicsTracking(Rigidbody body)
+        protected void PerformNonPhysicsPostionTracking(Rigidbody body)
         {
-            switch (selectedTracking)
+            switch (selectedPosTracking)
             {
-                case TrackingMethod.Transform:
-                    body.TrackPositionTransform(target.position);
-                    body.TrackRotationTransform(target.rotation);
+                case TrackingMode.Transform:
+                    body.TrackPositionTransform(targetTracker.position);
+                    break;
+            }
+        }
+
+        protected void PerformPhysicsRotationTracking(Rigidbody body)
+        {
+            switch (selectedPosTracking)
+            {
+                case TrackingMode.PIDController:
+                    body.TrackRotationPID(targetTracker.rotation, rotationFrequency, rotationDamping);
+                    break;
+
+                case TrackingMode.Velocity:
+                    body.TrackRotationVelocity(targetTracker.rotation, slowDownAngularVel, maxRotChange);
+                    break;
+            }
+        }
+
+        protected void PerformNonPhysicsRotationTracking(Rigidbody body)
+        {
+            switch (selectedPosTracking)
+            {
+                case TrackingMode.Transform:
+                    body.TrackRotationTransform(targetTracker.rotation);
                     break;
             }
         }
         #endregion
 
-        public enum TrackingMethod { PIDController, Velocity, Transform }
+        public enum TrackingMode { PIDController, Velocity, Transform }
     }
 }

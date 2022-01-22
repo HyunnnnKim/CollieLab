@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using CollieLab.Assets;
 using CollieLab.Helper;
 using UnityEngine;
 
@@ -8,14 +8,23 @@ namespace CollieLab.XR.Controllers
     {
         #region Serialized Field
         [Header("References")]
-        [SerializeField] private Rigidbody physicsBody = null;
+        [SerializeField] private Rigidbody hoverBody = null;
+        public Rigidbody HoverBody
+        {
+            get => hoverBody;
+        }
+
+        [SerializeField] private IgnoreGameObjects playerIgnoreObjects = null;
+        public IgnoreGameObjects PlayerIgnoreObjects
+        {
+            get => playerIgnoreObjects;
+        }
 
         [Header("Float")]
         [SerializeField] private float targetHeight = 1f;
         [SerializeField] private float springStrength = 500f;
         [SerializeField] private float springDamper = 200f;
         [SerializeField] private float rayLength = 1.3f;
-        [SerializeField] private List<Transform> ignoreGameObjects = null;
 
         [Header("UpRight")]
         [SerializeField] private float uprightFrequency = 1000f;
@@ -57,7 +66,7 @@ namespace CollieLab.XR.Controllers
 
         private void Start()
         {
-            //SetCameraOffset();
+            SetCameraOffset();
         }
 
         #region Initialize
@@ -86,7 +95,7 @@ namespace CollieLab.XR.Controllers
             }
             else if (OVRManager.instance.trackingOriginType == OVRManager.TrackingOrigin.FloorLevel)
             {
-                p.y = 1.8f;
+                p.y = 1.6f;
             }
             cameraRig.transform.localPosition = p;
         }
@@ -123,8 +132,8 @@ namespace CollieLab.XR.Controllers
         /// </summary>
         private void FloatBody()
         {
-            Vector3 downDir = physicsBody.transform.TransformDirection(Vector3.down);
-            RaycastHit[] hits = Physics.RaycastAll(physicsBody.transform.position, downDir, rayLength);
+            Vector3 downDir = hoverBody.transform.TransformDirection(Vector3.down);
+            RaycastHit[] hits = Physics.RaycastAll(hoverBody.transform.position, downDir, rayLength);
             if (hits.Length > 0)
             {
                 if (!onGround)
@@ -132,20 +141,20 @@ namespace CollieLab.XR.Controllers
 
                 for (int i = 0; i < hits.Length; i++)
                 {
-                    if (ignoreGameObjects.Contains(hits[i].transform)) continue;
+                    if (playerIgnoreObjects.Has(hits[i].transform.gameObject)) continue;
 
                     Vector3 hitVel = Vector3.zero;
                     hitBody = hits[i].rigidbody;
                     if (hitBody != null)
                         hitVel = hitBody.velocity;
 
-                    float bodyDirVel = Vector3.Dot(downDir, physicsBody.velocity);
+                    float bodyDirVel = Vector3.Dot(downDir, hoverBody.velocity);
                     float hitDirVel = Vector3.Dot(downDir, hitVel);
                     float relitiveVel = bodyDirVel - hitDirVel;
 
                     float targetDst = hits[i].distance - targetHeight;
                     float springForce = (targetDst * springStrength) - (relitiveVel * springDamper);
-                    physicsBody.AddForce(downDir * springForce);
+                    hoverBody.AddForce(downDir * springForce);
 
                     if (hitBody != null)
                         hitBody.AddForceAtPosition(downDir * -springForce, hits[i].point);
@@ -167,8 +176,8 @@ namespace CollieLab.XR.Controllers
         /// </summary>
         private void UprightBody()
         {
-            Vector3 forward = physicsBody.transform.TransformDirection(Vector3.up);
-            physicsBody.TrackRotationPID(Quaternion.Euler(forward), uprightFrequency, uprightDrag);
+            Vector3 forward = hoverBody.transform.TransformDirection(Vector3.up);
+            hoverBody.TrackRotationPID(Quaternion.Euler(forward), uprightFrequency, uprightDrag);
         }
         #endregion
 
@@ -185,9 +194,9 @@ namespace CollieLab.XR.Controllers
 
             Vector3 goalVel = inputDir * targetSpeed * Time.fixedDeltaTime;
             targetVel = Vector3.MoveTowards(targetVel, (goalVel + groundVel), acceleration * Time.fixedDeltaTime);
-            Vector3 targetAccel = (targetVel - physicsBody.velocity) / Time.fixedDeltaTime;
+            Vector3 targetAccel = (targetVel - hoverBody.velocity) / Time.fixedDeltaTime;
             targetAccel = Vector3.ClampMagnitude(targetAccel, maxAccelForce);
-            physicsBody.AddForce(Vector3.Scale(targetAccel * physicsBody.mass, new Vector3(1f, 0f, 1f)));
+            hoverBody.AddForce(Vector3.Scale(targetAccel * hoverBody.mass, new Vector3(1f, 0f, 1f)));
         }
 
         /// <summary>
@@ -233,7 +242,7 @@ namespace CollieLab.XR.Controllers
         {
             if (jumpInput && onGround)
             {
-                physicsBody.AddForce(Vector3.up * jumpUpVel, ForceMode.Impulse);
+                hoverBody.AddForce(Vector3.up * jumpUpVel, ForceMode.Impulse);
             }
         }
         #endregion
@@ -241,7 +250,7 @@ namespace CollieLab.XR.Controllers
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(physicsBody.transform.position, 0.3f);
+            Gizmos.DrawWireSphere(hoverBody.transform.position, 0.3f);
         }
     }
 }
