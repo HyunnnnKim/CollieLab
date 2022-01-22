@@ -61,7 +61,7 @@ namespace CollieLab.XR.Interactables
             {
                 FixedJoint joint = gameObject.AddComponent<FixedJoint>();
                 joint.connectedBody = hand.Body;
-                joint.enablePreprocessing = false;
+                //joint.enablePreprocessing = false;
                 return joint;
             }
         }

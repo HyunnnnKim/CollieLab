@@ -48,5 +48,14 @@ namespace CollieLab.Helper
             return new Quaternion(input.x * scalar, input.y * scalar, input.z * scalar, input.w * scalar);
         }
         #endregion
+
+        #region Angle
+        public static bool InAngle(this Vector3 vectorToCheck, Vector3 vectorToCompare, float limitAngle)
+        {
+            float cosAngle = Vector3.Dot(vectorToCheck, vectorToCompare);
+            float angle = Mathf.Acos(cosAngle) * Mathf.Rad2Deg;
+            return angle < limitAngle;
+        }
+        #endregion
     }
 }
